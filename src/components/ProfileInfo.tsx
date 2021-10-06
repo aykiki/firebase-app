@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { appAuth } from './App';
+import { appAuth, db } from './App';
 import { onAuthStateChanged } from '@firebase/auth';
 import { $currentUser, pushCurrentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
@@ -18,9 +18,10 @@ import {
   Backdrop,
   CircularProgress,
 } from '@mui/material';
-import { IUserInfo, newDataUserSchema } from '../interfaces';
+import { IUserInfo, newDataUserSchema } from '../yupInterfaces';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateEmail, updateProfile } from 'firebase/auth';
+import { ref, child, push, get, set, query } from 'firebase/database';
 
 export const ProfileInfo: React.FC = () => {
   const user = useStore($currentUser);
@@ -39,6 +40,19 @@ export const ProfileInfo: React.FC = () => {
       photoURL: user?.photoURL ?? '',
     },
   });
+
+  useEffect(() => {
+    set(push(ref(db, 'posts/')), {
+      authorID: user!.uid,
+      title: 'Animal',
+      text: 'Lorem ipsum',
+    })
+    // get(child(ref(db), `/posts/authorId/${user?.uid}`)).then(r => {
+    //   console.log(r.val());
+    // })
+    //   .catch(e => console.log(e))
+  },   [user])
+
 
   const onSubmit: SubmitHandler<IUserInfo> = (data) => {
     setLoader(true);

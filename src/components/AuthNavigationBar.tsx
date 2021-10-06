@@ -21,11 +21,11 @@ export const AuthNavigationBar: React.FC = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="absolute" style={{ zIndex: 1500 }}>
         <Toolbar>
-          <AnimationIcon onClick={() => history.push('/')} />
+          <AnimationIcon onClick={() => history.push('/')} sx={{ cursor: 'pointer',}}/>
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1 }}
+            sx={{ flexGrow: 1, cursor: 'default', }}
             onClick={() => history.push('/')}
           >
             Private Cab

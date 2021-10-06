@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
-import { userSchemaWithConfirmationPassword, IUser } from '../interfaces';
+import { userSchemaWithConfirmationPassword, IUser } from '../yupInterfaces';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createUserWithEmailAndPassword } from '@firebase/auth';

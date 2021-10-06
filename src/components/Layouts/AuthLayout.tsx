@@ -21,7 +21,9 @@ import { onAuthStateChanged } from '@firebase/auth';
 import { appAuth } from '../App';
 import { useHistory } from 'react-router';
 import { pushCurrentUser } from '../../currentUserStore';
-
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import FeedIcon from '@mui/icons-material/Feed';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
@@ -40,6 +42,10 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
       }
     });
   }, [history]);
+
+  useEffect(() => {
+    console.log("change user");
+  }, [user])
 
   return (
     <>
@@ -72,6 +78,33 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
             >
               <ListItemIcon>
                 <VpnKey />
+              </ListItemIcon>
+            </ListItem>
+            <ListItem
+              button
+              key="Add Post"
+              onClick={() => history.push('/profile/addPost')}
+            >
+              <ListItemIcon>
+                <PostAddIcon />
+              </ListItemIcon>
+            </ListItem>
+            <ListItem
+              button
+              key="Feed"
+              onClick={() => history.push('/profile/feed')}
+            >
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+            </ListItem>
+             <ListItem
+              button
+              key="Favorites"
+              onClick={() => history.push('/profile/favorites')}
+            >
+              <ListItemIcon>
+                <BookmarkIcon />
               </ListItemIcon>
             </ListItem>
           </List>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { appAuth } from './App';
+import { appAuth, db } from './App';
 import { updatePassword } from '@firebase/auth';
 import { $currentUser, pushCurrentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
@@ -25,8 +25,9 @@ import {
   IUser,
   passwordSchema,
   userSchemaWithConfirmationPassword,
-} from '../interfaces';
+} from '../yupInterfaces';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { query, ref, onValue, limitToFirst } from 'firebase/database';
 
 export const ProfileChangePassword: React.FC = () => {
   const user = useStore($currentUser);
@@ -49,6 +50,18 @@ export const ProfileChangePassword: React.FC = () => {
       .catch((error) => setErrorType(error.code))
       .finally(() => setLoader(false));
   };
+
+  // useEffect(() => {
+  //   // const posts = ref(db, 'posts');
+  //   // onValue(posts, (snapshot) => {
+  //   //   snapshot.forEach(item => {
+  //   //     if(item.val().authorID === user!.uid) {
+  //   //       console.log(item.val())
+  //   //     }
+  //   //   })
+  //   // })
+  //
+  // }, []);
 
   return (
     <Container component="main" maxWidth="xs">

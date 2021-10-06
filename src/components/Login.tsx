@@ -14,7 +14,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { pushCurrentUser } from '../currentUserStore';
-import { IUserAuthInfo, userSchema } from '../interfaces';
+import { IUserAuthInfo, userSchema } from '../yupInterfaces';
 import { appAuth } from './App';
 import { NavLink } from 'react-router-dom';
 import { Alert, Backdrop, CircularProgress, Snackbar } from '@mui/material';

@@ -25,6 +25,14 @@ export const newDataUserSchema = yup.object({
   displayName: yup.string(),
   photoURL: yup.string(),
 });
+
+export const postSchema = yup.object({
+  title: yup.string().required('Field id required'),
+  description: yup.string().required('Field id required'),
+  photoURL: yup.string(),
+  mainText: yup.string().required('Field is required'),
+});
+
 export const passwordSchema = yup.object({
   password: yup
     .string()
@@ -38,4 +46,4 @@ export interface IUser
 export interface IUserAuthInfo extends Asserts<typeof userSchema> {}
 export interface IUserInfo extends Asserts<typeof newDataUserSchema> {}
 export interface IPassword extends Asserts<typeof passwordSchema> {}
-
+export interface IPostForm extends Asserts<typeof postSchema> {}
