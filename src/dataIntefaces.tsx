@@ -1,5 +1,6 @@
 export interface IPost {
   authorID: string;
+  authorEmail: string,
   title: string;
   description: string;
   date: string;
@@ -8,3 +9,4 @@ export interface IPost {
   countOfLikes: number;
   countOfDislikes: number;
 }
+

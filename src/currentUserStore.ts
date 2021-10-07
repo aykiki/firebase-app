@@ -6,6 +6,6 @@ const clearCurrentUser = createEvent()
 
 const $currentUser = createStore<User | null>(null)
   .on(pushCurrentUser, ( _, user) => user)
-  .on(clearCurrentUser, () => {})
+  .on(clearCurrentUser, () => null)
 
 export { $currentUser, pushCurrentUser, clearCurrentUser }

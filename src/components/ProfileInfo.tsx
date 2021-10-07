@@ -41,24 +41,10 @@ export const ProfileInfo: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    set(push(ref(db, 'posts/')), {
-      authorID: user!.uid,
-      title: 'Animal',
-      text: 'Lorem ipsum',
-    })
-    // get(child(ref(db), `/posts/authorId/${user?.uid}`)).then(r => {
-    //   console.log(r.val());
-    // })
-    //   .catch(e => console.log(e))
-  },   [user])
-
-
   const onSubmit: SubmitHandler<IUserInfo> = (data) => {
     setLoader(true);
     if (data.email !== user!.email!) {
-      updateEmail(user!, data.email)
-        .then(() => setSuccessEdit(true));
+      updateEmail(user!, data.email).then(() => setSuccessEdit(true));
     }
 
     if (user!.displayName! === null) {

@@ -43,9 +43,6 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
     });
   }, [history]);
 
-  useEffect(() => {
-    console.log("change user");
-  }, [user])
 
   return (
     <>
@@ -53,12 +50,12 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
       <Drawer variant="persistent" open={true}>
         <Box marginTop="10vh">
           <List sx={{ width: '56px' }}>
-            <ListItem button key="Profile-info" disabled>
+            <ListItem button key="Profile-info" disabled >
               <ListItemIcon>
                 {user === null || user.photoURL === null ? (
                   <FaceIcon />
                 ) : (
-                  <Avatar src={user!.photoURL} />
+                  <Avatar src={user!.photoURL} style={{marginLeft: "-6px"}}/>
                 )}
               </ListItemIcon>
             </ListItem>
@@ -110,8 +107,8 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
           </List>
         </Box>
       </Drawer>
-      {!user && <Skeleton />}
-      {user && <div>{children}</div>}
+        {!user && <Skeleton />}
+        {user && <div>{children}</div>}
     </>
   );
 };

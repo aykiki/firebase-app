@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { appAuth, db } from './App';
+import React, { useState } from 'react';
 import { updatePassword } from '@firebase/auth';
-import { $currentUser, pushCurrentUser } from '../currentUserStore';
+import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 import {
   Alert,
@@ -50,18 +49,6 @@ export const ProfileChangePassword: React.FC = () => {
       .catch((error) => setErrorType(error.code))
       .finally(() => setLoader(false));
   };
-
-  // useEffect(() => {
-  //   // const posts = ref(db, 'posts');
-  //   // onValue(posts, (snapshot) => {
-  //   //   snapshot.forEach(item => {
-  //   //     if(item.val().authorID === user!.uid) {
-  //   //       console.log(item.val())
-  //   //     }
-  //   //   })
-  //   // })
-  //
-  // }, []);
 
   return (
     <Container component="main" maxWidth="xs">

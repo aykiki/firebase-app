@@ -23,7 +23,7 @@ import { updatePassword } from 'firebase/auth';
 import { useStore } from 'effector-react';
 import { IPost } from '../dataIntefaces';
 import { push, ref, set } from 'firebase/database';
-import { db } from './App';
+import { db, postsRef } from './App';
 
 export const AddPost: React.FC = () => {
   const user = useStore($currentUser);
@@ -38,10 +38,11 @@ export const AddPost: React.FC = () => {
     resolver: yupResolver(postSchema),
   });
 
-  const onSubmit: SubmitHandler<IPostForm> = (data) => {
+  const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
     const newPost: IPost = {
       authorID: user!.uid,
+      authorEmail: user!.email!,
       title: data.title,
       description: data.description,
       date: (new Date()).toISOString(),
@@ -50,13 +51,14 @@ export const AddPost: React.FC = () => {
       countOfLikes: 0,
       countOfDislikes: 0,
     };
-    set(push(ref(db, 'posts/')), newPost)
-      .catch(() => setLoader(false))
-      .finally(() => {
-        setLoader(false);
-        setSuccessPublish(true);
-      });
-    reset()
+
+    try {
+      await set(push(postsRef), newPost);
+      reset(undefined)
+    } finally {
+      setLoader(false);
+      setSuccessPublish(true);
+    }
   };
 
   return (

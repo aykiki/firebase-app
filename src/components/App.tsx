@@ -20,6 +20,7 @@ import { Favorites } from './Favorits';
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const appAuth = getAuth();
+export const postsRef = ref(db, 'posts/');
 const theme = createTheme();
 
 /**
