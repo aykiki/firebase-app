@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react';
-import { IPost } from '../dataIntefaces';
+import React, { FC, useEffect, useState } from 'react';
+import { IPost, Reaction } from '../dataIntefaces';
 import {
   Card,
   CardActions,
@@ -14,16 +14,52 @@ import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import CloseIcon from '@mui/icons-material/Close';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
+import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import { child, push, update } from 'firebase/database';
+import { db, postsRef } from './App';
+import { $currentUser } from '../currentUserStore';
+import { useStore } from 'effector-react';
 interface IPostCardProps {
   item: IPost;
   closePost: () => void;
 }
+
 export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
+  const user = useStore($currentUser);
+  const [reaction, setReaction] = useState<Reaction>('none');
+  const [favorites, setFavorites] = useState<boolean>(false);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const giveReaction = (react: Reaction) => {
+    if (react === reaction) {
+      setReaction('none');
+      return;
+    }
+    if (reaction !== react) {
+      setReaction(react);
+      return;
+    }
+    setReaction('none');
+  };
 
   useEffect(() => {
-    window.scrollTo({top: 0,
-      behavior: "smooth"})
-  }, [])
+    if (item.countOfDislikes) {
+      if (item.countOfDislikes.includes(user!.uid)) {
+      } else {
+        setReaction('dislike');
+      }
+    }
+    if (item.countOfLikes) {
+      if (item.countOfLikes.includes(user!.uid)) {
+      } else {
+        setReaction('like');
+      }
+    }
+  }, []);
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
       <Card>
@@ -31,7 +67,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
           title={item.title}
           action={
             <IconButton>
-              <CloseIcon onClick={closePost}/>
+              <CloseIcon onClick={closePost} />
             </IconButton>
           }
         />
@@ -63,14 +99,23 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
           <Typography variant="body2" color="text.secondary" component="p">
             post by: {item.authorEmail}
           </Typography>
-          <IconButton aria-label="add to favorites">
-            <ThumbUpIcon />
+          <IconButton aria-label="like" onClick={() => giveReaction('like')}>
+            {reaction === 'like' && <ThumbUpIcon />}
+            {reaction !== 'like' && <ThumbUpAltOutlinedIcon />}
           </IconButton>
-          <IconButton aria-label="share">
-            <ThumbDownAltIcon />
+          <IconButton
+            aria-label="dislike"
+            onClick={() => giveReaction('dislike')}
+          >
+            {reaction === 'dislike' && <ThumbDownAltIcon />}
+            {reaction !== 'dislike' && <ThumbDownOutlinedIcon />}
           </IconButton>
-          <IconButton aria-label="share">
-            <StarBorderIcon />
+          <IconButton
+            aria-label="favorite"
+            onClick={() => setFavorites((prev) => !prev)}
+          >
+            {favorites && <StarOutlinedIcon />}
+            {!favorites && <StarBorderIcon />}
           </IconButton>
         </CardActions>
       </Card>

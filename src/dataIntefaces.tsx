@@ -6,7 +6,13 @@ export interface IPost {
   date: string;
   photoURL: string;
   mainText: string;
-  countOfLikes: number;
-  countOfDislikes: number;
+  countOfLikes: string[];
+  countOfDislikes: string[];
 }
+
+
+
+
+
+export type Reaction = 'like' | 'dislike' | 'none';
 

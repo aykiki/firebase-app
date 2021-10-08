@@ -34,6 +34,7 @@ export const Feed: React.FC = () => {
         const snapshot = await get(child(ref(db), 'posts/'));
         if (snapshot.val()) {
           setPostsList(Object.values(snapshot.val()));
+          console.log(Object.values(snapshot.val()))
         } else {
           setPostsList([]);
         }
@@ -44,6 +45,10 @@ export const Feed: React.FC = () => {
     };
     fetchPosts();
   }, []);
+
+  useEffect(()=>{
+    console.log(postsList)
+  }, [postsList])
 
   return (
     <>
@@ -102,7 +107,7 @@ export const Feed: React.FC = () => {
                       color="text.secondary"
                       component="p"
                     >
-                      Likes: {item.countOfLikes}
+                      Likes: {item.countOfLikes ? item.countOfLikes.length: 0}
                     </Typography>
 
                     <Typography
@@ -110,7 +115,7 @@ export const Feed: React.FC = () => {
                       color="text.secondary"
                       component="p"
                     >
-                      Dislikes: {item.countOfDislikes}
+                      Dislikes: {item.countOfDislikes ? item.countOfDislikes.length: 0}
                     </Typography>
 
                     <Button onClick={() => setOpenCard(index)}>

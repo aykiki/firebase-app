@@ -40,6 +40,7 @@ export const AddPost: React.FC = () => {
 
   const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
+    // todo: add uid for post
     const newPost: IPost = {
       authorID: user!.uid,
       authorEmail: user!.email!,
@@ -48,8 +49,8 @@ export const AddPost: React.FC = () => {
       date: (new Date()).toISOString(),
       photoURL: data.photoURL ?? '',
       mainText: data.mainText,
-      countOfLikes: 0,
-      countOfDislikes: 0,
+      countOfLikes: [],
+      countOfDislikes: [],
     };
 
     try {
