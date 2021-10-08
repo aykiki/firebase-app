@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { IPost } from '../dataIntefaces';
 import {
   Card,
@@ -19,6 +19,11 @@ interface IPostCardProps {
   closePost: () => void;
 }
 export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
+
+  useEffect(() => {
+    window.scrollTo({top: 0,
+      behavior: "smooth"})
+  }, [])
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
       <Card>
