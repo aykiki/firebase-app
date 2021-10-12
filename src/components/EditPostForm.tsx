@@ -12,14 +12,11 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { push, update } from 'firebase/database';
+import { update } from 'firebase/database';
 import { postsRef } from './App';
-import { $currentUser } from '../currentUserStore';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { IPostForm, postSchema } from '../yupInterfaces';
-import { useStore } from 'effector-react';
-import { useHistory } from 'react-router';
 
 interface IEditPostFormProps {
   item: IPost;
@@ -30,11 +27,12 @@ export const EditPostForm: React.FC<IEditPostFormProps> = ({
   item,
   closeEdit,
 }) => {
-  const user = useStore($currentUser);
-  const history = useHistory();
+
 
   const [loader, setLoader] = useState<boolean>(false);
   const [successPublish, setSuccessPublish] = useState<boolean>(false);
+
+
   const {
     register,
     handleSubmit,
@@ -76,6 +74,8 @@ export const EditPostForm: React.FC<IEditPostFormProps> = ({
       closeEdit();
     }
   };
+
+
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />

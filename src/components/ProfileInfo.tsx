@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { appAuth, db } from './App';
-import { onAuthStateChanged } from '@firebase/auth';
-import { $currentUser, pushCurrentUser } from '../currentUserStore';
+import React, { useState } from 'react';
+import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
@@ -9,8 +7,6 @@ import {
   Container,
   CssBaseline,
   Box,
-  Avatar,
-  Typography,
   Grid,
   TextField,
   Button,
@@ -21,17 +17,17 @@ import {
 import { IUserInfo, newDataUserSchema } from '../yupInterfaces';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateEmail, updateProfile } from 'firebase/auth';
-import { ref, child, push, get, set, query } from 'firebase/database';
 
 export const ProfileInfo: React.FC = () => {
-  const user = useStore($currentUser);
   const [loader, setLoader] = useState<boolean>(false);
   const [successEdit, setSuccessEdit] = useState<boolean>(false);
+
+  const user = useStore($currentUser);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<IUserInfo>({
     resolver: yupResolver(newDataUserSchema),
     defaultValues: {
@@ -73,6 +69,7 @@ export const ProfileInfo: React.FC = () => {
 
     setLoader(false);
   };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />

@@ -3,13 +3,11 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,7 +25,6 @@ export const Login: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<IUserAuthInfo>({
     resolver: yupResolver(userSchema),
   });
@@ -135,7 +132,6 @@ export const Login: React.FC = () => {
         </Alert>
       </Snackbar>
 
-
       <Snackbar
         open={errorType === 'auth/wrong-password'}
         autoHideDuration={4000}
@@ -145,7 +141,6 @@ export const Login: React.FC = () => {
           Wrong password!
         </Alert>
       </Snackbar>
-
 
       {loader && (
         <Backdrop

@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { child, get, onValue, ref } from 'firebase/database';
-import { db, postsRef } from './App';
+import { child, get, ref } from 'firebase/database';
+import { db } from './App';
 import { IPost } from '../dataIntefaces';
 import {
-  Box,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardMedia,
-  Collapse,
   Container,
   Grid,
-  IconButton,
   Skeleton,
 } from '@mui/material';
-import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { CardActions } from '@material-ui/core';
-import { StarBorderOutlined } from '@material-ui/icons';
 import { PostCard } from './PostCard';
 
 export const Feed: React.FC = () => {
+
   const [postsList, setPostsList] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
+
+
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
@@ -58,6 +55,7 @@ export const Feed: React.FC = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
 
   useEffect(() => {
     if (whichCardIsOpen === undefined) {

@@ -17,8 +17,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
-import { child, push, update } from 'firebase/database';
-import { appAuth, db, postsRef } from './App';
+import { update } from 'firebase/database';
+import { postsRef } from './App';
 import EditIcon from '@mui/icons-material/Edit';
 import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
@@ -29,10 +29,15 @@ interface IPostCardProps {
 }
 
 export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
-  const user = useStore($currentUser);
+
   const [reaction, setReaction] = useState<Reaction>('none');
   const [isFavorite, setFavorite] = useState<boolean>(false);
   const [isEdit, setEdit] = useState<boolean>(false);
+
+
+  const user = useStore($currentUser);
+
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -63,6 +68,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
     }
   }, []);
 
+
   useEffect(() => {
     if (reaction === 'dislike') {
       if (item.countOfDislikes.includes(user!.uid)) {
@@ -83,6 +89,8 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       changeReaction('deleteLike', user!.uid);
     }
   }, [reaction]);
+
+
 
   const changeReaction = (control: string, userUID: string) => {
     const tempPost = Object.assign(item);
@@ -116,6 +124,8 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
     update(postsRef, updates);
   };
 
+
+
   useEffect(() => {
     if (isFavorite) {
       if (!item.favorites.includes(user!.uid)) {
@@ -128,6 +138,8 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       }
     }
   }, [isFavorite]);
+
+
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>

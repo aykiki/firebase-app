@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,18 +14,22 @@ const handleSignOut = () => {
   appAuth.signOut();
 };
 
-
 export const AuthNavigationBar: React.FC = () => {
+
   const history = useHistory();
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="absolute" style={{ zIndex: 1500 }}>
         <Toolbar>
-          <AnimationIcon onClick={() => history.push('/')} sx={{ cursor: 'pointer',}}/>
+          <AnimationIcon
+            onClick={() => history.push('/')}
+            sx={{ cursor: 'pointer' }}
+          />
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, cursor: 'default', }}
+            sx={{ flexGrow: 1, cursor: 'default' }}
             onClick={() => history.push('/')}
           >
             Private Cab

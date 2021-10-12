@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,7 +15,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createUserWithEmailAndPassword } from '@firebase/auth';
 import { pushCurrentUser } from '../currentUserStore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { appAuth } from './App';
 import { Alert, Backdrop, CircularProgress, Snackbar } from '@mui/material';
 
@@ -23,15 +23,15 @@ const theme = createTheme();
 
 export const Registration: React.FC = () => {
   const [loader, setLoader] = useState<boolean>(false);
+  const [errorType, setErrorType] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<IUser>({
     resolver: yupResolver(userSchemaWithConfirmationPassword),
   });
-  const [errorType, setErrorType] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<IUser> = (data) => {
     setLoader(true);
@@ -47,10 +47,6 @@ export const Registration: React.FC = () => {
         setLoader(false);
       });
   };
-
-  useEffect(() => {
-    console.log(errorType);
-  }, [errorType]);
 
   return (
     <ThemeProvider theme={theme}>

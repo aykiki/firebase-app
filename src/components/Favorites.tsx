@@ -21,12 +21,13 @@ import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 
 export const Favorites: React.FC = () => {
-  const user = useStore($currentUser);
   const [isFavorite, setFavorite] = useState<undefined | IPost>(undefined);
   const [postsList, setPostsList] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
+
+  const user = useStore($currentUser);
 
   const fetchPosts = async () => {
     try {
@@ -94,6 +95,8 @@ export const Favorites: React.FC = () => {
     <>
       {isLoading && (
         <Container component="main" sx={{ mt: 15, mb: 10 }}>
+          <Skeleton />
+          <Skeleton />
           <Skeleton />
           <Skeleton />
           <Skeleton />

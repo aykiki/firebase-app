@@ -21,19 +21,20 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   IPassword,
-  IUser,
   passwordSchema,
-  userSchemaWithConfirmationPassword,
 } from '../yupInterfaces';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { query, ref, onValue, limitToFirst } from 'firebase/database';
 
 export const ProfileChangePassword: React.FC = () => {
-  const user = useStore($currentUser);
+
   const [reveal, setReveal] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const [successEdit, setSuccessEdit] = useState<boolean>(false);
   const [errorType, setErrorType] = useState<string | null>(null);
+
+  const user = useStore($currentUser);
+
+
   const {
     register,
     handleSubmit,

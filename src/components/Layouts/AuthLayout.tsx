@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
 import { AuthNavigationBar } from '../AuthNavigationBar';
-
 import { $currentUser } from '../../currentUserStore';
 import { useStore } from 'effector-react';
 import {
   Avatar,
   Box,
-  Divider,
   Drawer,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   Skeleton,
 } from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
@@ -43,19 +40,18 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
     });
   }, [history]);
 
-
   return (
     <>
       <AuthNavigationBar />
       <Drawer variant="persistent" open={true}>
         <Box marginTop="10vh">
           <List sx={{ width: '56px' }}>
-            <ListItem button key="Profile-info" disabled >
+            <ListItem button key="Profile-info" disabled>
               <ListItemIcon>
                 {user === null || user.photoURL === null ? (
                   <FaceIcon />
                 ) : (
-                  <Avatar src={user!.photoURL} style={{marginLeft: "-6px"}}/>
+                  <Avatar src={user!.photoURL} style={{ marginLeft: '-6px' }} />
                 )}
               </ListItemIcon>
             </ListItem>
@@ -95,7 +91,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
                 <FeedIcon />
               </ListItemIcon>
             </ListItem>
-             <ListItem
+            <ListItem
               button
               key="Favorites"
               onClick={() => history.push('/profile/favorites')}
@@ -107,8 +103,8 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
           </List>
         </Box>
       </Drawer>
-        {!user && <Skeleton />}
-        {user && <div>{children}</div>}
+      {!user && <Skeleton />}
+      {user && <div>{children}</div>}
     </>
   );
 };

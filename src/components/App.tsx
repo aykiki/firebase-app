@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { getAuth } from '@firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase.config';
-import { getDatabase, set, ref, query, push } from 'firebase/database';
+import { getDatabase, ref } from 'firebase/database';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { UnAuthLayout } from './Layouts/UnAuthLayout';
 import { AuthLayout } from './Layouts/AuthLayout';
@@ -14,7 +14,7 @@ import { ProfileChangePassword } from './ProfileChangePassword';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { AddPost } from './AddPost';
-import { Feed } from './Feed'
+import { Feed } from './Feed';
 import { Favorites } from './Favorites';
 
 export const app = initializeApp(firebaseConfig);
@@ -57,8 +57,6 @@ const theme = createTheme();
  *
  */
 export const App: React.FC = () => {
-
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
