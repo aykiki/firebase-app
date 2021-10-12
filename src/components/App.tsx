@@ -15,7 +15,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { AddPost } from './AddPost';
 import { Feed } from './Feed'
-import { Favorites } from './Favorits';
+import { Favorites } from './Favorites';
 
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);

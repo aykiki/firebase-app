@@ -1,6 +1,7 @@
 export interface IPost {
+  postUID: string;
   authorID: string;
-  authorEmail: string,
+  authorEmail: string;
   title: string;
   description: string;
   date: string;
@@ -8,11 +9,11 @@ export interface IPost {
   mainText: string;
   countOfLikes: string[];
   countOfDislikes: string[];
+  favorites: string[],
 }
 
-
-
-
+export interface newPostData {
+  [key: string]: IPost;
+}
 
 export type Reaction = 'like' | 'dislike' | 'none';
-

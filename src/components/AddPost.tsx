@@ -12,17 +12,12 @@ import {
   Container,
   CssBaseline,
   Grid,
-  IconButton,
-  InputAdornment,
   Snackbar,
   TextField,
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { updatePassword } from 'firebase/auth';
 import { useStore } from 'effector-react';
-import { IPost } from '../dataIntefaces';
-import { push, ref, set } from 'firebase/database';
+import { IPost, newPostData } from '../dataIntefaces';
+import { push, ref, set, update } from 'firebase/database';
 import { db, postsRef } from './App';
 
 export const AddPost: React.FC = () => {
@@ -41,21 +36,26 @@ export const AddPost: React.FC = () => {
   const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
     // todo: add uid for post
-    const newPost: IPost = {
+    const updates: newPostData = {};
+    const postKey = push(postsRef, updates).key;
+
+    updates[postKey + '/'] = {
+      postUID: postKey!,
       authorID: user!.uid,
       authorEmail: user!.email!,
       title: data.title,
       description: data.description,
-      date: (new Date()).toISOString(),
+      date: new Date().toISOString(),
       photoURL: data.photoURL ?? '',
       mainText: data.mainText,
       countOfLikes: [],
       countOfDislikes: [],
+      favorites: [],
     };
 
     try {
-      await set(push(postsRef), newPost);
-      reset(undefined)
+      await update(postsRef, updates);
+      reset(undefined);
     } finally {
       setLoader(false);
       setSuccessPublish(true);

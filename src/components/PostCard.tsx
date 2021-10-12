@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IPost, Reaction } from '../dataIntefaces';
+import { IPost, newPostData, Reaction } from '../dataIntefaces';
 import {
   Card,
   CardActions,
@@ -18,7 +18,7 @@ import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import { child, push, update } from 'firebase/database';
-import { db, postsRef } from './App';
+import { appAuth, db, postsRef } from './App';
 import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 interface IPostCardProps {
@@ -29,7 +29,7 @@ interface IPostCardProps {
 export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
   const user = useStore($currentUser);
   const [reaction, setReaction] = useState<Reaction>('none');
-  const [favorites, setFavorites] = useState<boolean>(false);
+  const [isFavorite, setFavorite] = useState<boolean>(false);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -47,19 +47,85 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
   };
 
   useEffect(() => {
-    if (item.countOfDislikes) {
-      if (item.countOfDislikes.includes(user!.uid)) {
-      } else {
-        setReaction('dislike');
-      }
+    if (item.countOfLikes.includes(user!.uid)) {
+      setReaction('like');
     }
-    if (item.countOfLikes) {
-      if (item.countOfLikes.includes(user!.uid)) {
-      } else {
-        setReaction('like');
-      }
+
+    if (item.countOfDislikes.includes(user!.uid)) {
+      setReaction('dislike');
+    }
+
+    if (item.favorites.includes(user!.uid)) {
+      setFavorite(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (reaction === 'dislike') {
+      if (item.countOfDislikes.includes(user!.uid)) {
+        changeReaction('deleteDislike', user!.uid);
+      } else {
+        changeReaction('deleteLike', user!.uid);
+        changeReaction('addDislike', user!.uid);
+      }
+    } else if (reaction === 'like') {
+      if (item.countOfLikes.includes(user!.uid)) {
+        changeReaction('deleteLike', user!.uid);
+      } else {
+        changeReaction('deleteDislike', user!.uid);
+        changeReaction('addLike', user!.uid);
+      }
+    } else {
+      changeReaction('deleteDislike', user!.uid);
+      changeReaction('deleteLike', user!.uid);
+    }
+  }, [reaction]);
+
+  const changeReaction = (control: string, userUID: string) => {
+    const tempPost = Object.assign(item);
+    if (control === 'deleteDislike') {
+      tempPost.countOfDislikes = item.countOfDislikes.filter(
+        (item) => item !== userUID
+      );
+    }
+    if (control === 'addDislike') {
+      tempPost.countOfDislikes.push(userUID);
+    }
+    if (control === 'deleteLike') {
+      tempPost.countOfLikes = item.countOfLikes.filter(
+        (item) => item !== userUID
+      );
+    }
+    if (control === 'addLike') {
+      tempPost.countOfLikes.push(userUID);
+    }
+
+    if (control === 'deleteFromFavorites') {
+      tempPost.favorites = item.favorites.filter((item) => item !== userUID);
+    }
+
+    if (control === 'addToFavorites') {
+      tempPost.favorites.push(userUID);
+    }
+
+    const updates: newPostData = {};
+    updates[tempPost.postUID + '/'] = tempPost;
+    update(postsRef, updates);
+  };
+
+  useEffect(() => {
+    if (isFavorite) {
+      if (!item.favorites.includes(user!.uid)) {
+        changeReaction('addToFavorites', user!.uid);
+      }
+    }
+    if (!isFavorite) {
+      if (item.favorites.includes(user!.uid)) {
+        changeReaction('deleteFromFavorites', user!.uid);
+      }
+    }
+  }, [isFavorite]);
+
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
       <Card>
@@ -112,10 +178,10 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
           </IconButton>
           <IconButton
             aria-label="favorite"
-            onClick={() => setFavorites((prev) => !prev)}
+            onClick={() => setFavorite((prev) => !prev)}
           >
-            {favorites && <StarOutlinedIcon />}
-            {!favorites && <StarBorderIcon />}
+            {isFavorite && <StarOutlinedIcon />}
+            {!isFavorite && <StarBorderIcon />}
           </IconButton>
         </CardActions>
       </Card>
