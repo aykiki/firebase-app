@@ -19,8 +19,10 @@ import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import { child, push, update } from 'firebase/database';
 import { appAuth, db, postsRef } from './App';
+import EditIcon from '@mui/icons-material/Edit';
 import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
+import { EditPostForm } from './EditPostForm';
 interface IPostCardProps {
   item: IPost;
   closePost: () => void;
@@ -30,6 +32,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
   const user = useStore($currentUser);
   const [reaction, setReaction] = useState<Reaction>('none');
   const [isFavorite, setFavorite] = useState<boolean>(false);
+  const [isEdit, setEdit] = useState<boolean>(false);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -128,63 +131,73 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
-      <Card>
-        <CardHeader
-          title={item.title}
-          action={
-            <IconButton>
-              <CloseIcon onClick={closePost} />
-            </IconButton>
-          }
-        />
+      {!isEdit && (
+        <Card>
+          <CardHeader
+            title={item.title}
+            action={
+              <>
+                {user!.uid === item.authorID && (
+                  <IconButton>
+                    <EditIcon onClick={() => setEdit((prev) => !prev)} />
+                  </IconButton>
+                )}
+                <IconButton>
+                  <CloseIcon onClick={closePost} />
+                </IconButton>
+              </>
+            }
+          />
 
-        <CardMedia
-          component="img"
-          height="640"
-          image={
-            item.photoURL !== ''
-              ? item.photoURL
-              : 'https://i.stack.imgur.com/y9DpT.jpg'
-          }
-          alt={item.title}
-        />
-        <CardContent>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            component="pre"
-            style={{
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-            }}
-          >
-            {item.mainText}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Typography variant="body2" color="text.secondary" component="p">
-            post by: {item.authorEmail}
-          </Typography>
-          <IconButton aria-label="like" onClick={() => giveReaction('like')}>
-            {reaction === 'like' && <ThumbUpIcon />}
-            {reaction !== 'like' && <ThumbUpAltOutlinedIcon />}
-          </IconButton>
-          <IconButton
-            aria-label="dislike"
-            onClick={() => giveReaction('dislike')}
-          >
-            {reaction === 'dislike' && <ThumbDownAltIcon />}
-            {reaction !== 'dislike' && <ThumbDownOutlinedIcon />}
-          </IconButton>
-          <IconButton
-            aria-label="favorite"
-            onClick={() => setFavorite((prev) => !prev)}
-          >
-            {isFavorite && <StarOutlinedIcon />}
-            {!isFavorite && <StarBorderIcon />}
-          </IconButton>
-        </CardActions>
-      </Card>
+          <CardMedia
+            component="img"
+            height="640"
+            image={
+              item.photoURL !== ''
+                ? item.photoURL
+                : 'https://i.stack.imgur.com/y9DpT.jpg'
+            }
+            alt={item.title}
+          />
+          <CardContent>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              component="pre"
+              style={{
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {item.mainText}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Typography variant="body2" color="text.secondary" component="p">
+              post by: {item.authorEmail}
+            </Typography>
+            <IconButton aria-label="like" onClick={() => giveReaction('like')}>
+              {reaction === 'like' && <ThumbUpIcon />}
+              {reaction !== 'like' && <ThumbUpAltOutlinedIcon />}
+            </IconButton>
+            <IconButton
+              aria-label="dislike"
+              onClick={() => giveReaction('dislike')}
+            >
+              {reaction === 'dislike' && <ThumbDownAltIcon />}
+              {reaction !== 'dislike' && <ThumbDownOutlinedIcon />}
+            </IconButton>
+            <IconButton
+              aria-label="favorite"
+              onClick={() => setFavorite((prev) => !prev)}
+            >
+              {isFavorite && <StarOutlinedIcon />}
+              {!isFavorite && <StarBorderIcon />}
+            </IconButton>
+          </CardActions>
+        </Card>
+      )}
+      {isEdit && <EditPostForm closeEdit={closePost} item={item} />}
     </Container>
   );
 };

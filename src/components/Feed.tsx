@@ -27,37 +27,43 @@ export const Feed: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        const snapshot = await get(child(ref(db), 'posts/'));
-        if (snapshot.val()) {
-          let tempArray: IPost[] = Object.values(snapshot.val());
-          tempArray = tempArray.map((item) => {
-            if (!item.countOfDislikes) {
-              item.countOfDislikes = [];
-            }
-            if (!item.countOfLikes) {
-              item.countOfLikes = [];
-            }
-            if (!item.favorites) {
-              item.favorites = [];
-            }
-            return item;
-          });
-          setPostsList(tempArray);
-        } else {
-          setPostsList([]);
-        }
-        setIsLoaded(true);
-      } finally {
-        setIsLoading(false);
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const snapshot = await get(child(ref(db), 'posts/'));
+      if (snapshot.val()) {
+        let tempArray: IPost[] = Object.values(snapshot.val());
+        tempArray = tempArray.map((item) => {
+          if (!item.countOfDislikes) {
+            item.countOfDislikes = [];
+          }
+          if (!item.countOfLikes) {
+            item.countOfLikes = [];
+          }
+          if (!item.favorites) {
+            item.favorites = [];
+          }
+          return item;
+        });
+        setPostsList(tempArray);
+      } else {
+        setPostsList([]);
       }
-    };
+      setIsLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    if (whichCardIsOpen === undefined) {
+      fetchPosts();
+    }
+  }, [whichCardIsOpen]);
 
   return (
     <>
@@ -92,7 +98,7 @@ export const Feed: React.FC = () => {
                     />
                     <CardMedia
                       component="img"
-                      height="340"
+                      height="250"
                       image={
                         item.photoURL !== ''
                           ? item.photoURL

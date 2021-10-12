@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { child, get, ref } from 'firebase/database';
-import { db } from './App';
-import { IPost } from '../dataIntefaces';
+import { child, get, ref, update } from 'firebase/database';
+import { db, postsRef } from './App';
+import { IPost, newPostData } from '../dataIntefaces';
 import {
   Button,
   Card,
@@ -14,53 +14,91 @@ import {
   Skeleton,
   Typography,
 } from '@mui/material';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import { PostCard } from './PostCard';
 import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 
 export const Favorites: React.FC = () => {
   const user = useStore($currentUser);
-
+  const [isFavorite, setFavorite] = useState<undefined | IPost>(undefined);
   const [postsList, setPostsList] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        const snapshot = await get(child(ref(db), 'posts/'));
-        if (snapshot.val()) {
-          let tempArray: IPost[] = Object.values(snapshot.val());
-          tempArray = tempArray.map((item) => {
-            if (!item.countOfDislikes) {
-              item.countOfDislikes = [];
-            }
-            if (!item.countOfLikes) {
-              item.countOfLikes = [];
-            }
-            if (!item.favorites) {
-              item.favorites = [];
-            }
-            return item;
-          });
-          tempArray = tempArray.filter((item) =>
-            item.favorites.includes(user!.uid)
-          );
-          setPostsList(tempArray);
-        } else {
-          setPostsList([]);
-        }
-        setIsLoaded(true);
-      } finally {
-        setIsLoading(false);
+
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const snapshot = await get(child(ref(db), 'posts/'));
+      if (snapshot.val()) {
+        let tempArray: IPost[] = Object.values(snapshot.val());
+        tempArray = tempArray.map((item) => {
+          if (!item.countOfDislikes) {
+            item.countOfDislikes = [];
+          }
+          if (!item.countOfLikes) {
+            item.countOfLikes = [];
+          }
+          if (!item.favorites) {
+            item.favorites = [];
+          }
+          return item;
+        });
+        tempArray = tempArray.filter((item) =>
+          item.favorites.includes(user!.uid)
+        );
+        setPostsList(tempArray);
+      } else {
+        setPostsList([]);
       }
-    };
+      setIsLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
+
+  const handleStarClick = async (item: IPost) => {
+    if (isFavorite !== undefined && isFavorite.postUID === item.postUID) {
+      setFavorite(undefined);
+      return;
+    }
+    setFavorite(item);
+  };
+
+  useEffect(() => {
+    if (isFavorite !== undefined) {
+      if (isFavorite.favorites.includes(user!.uid)) {
+        changeFavorites(isFavorite);
+      }
+    }
+    fetchPosts();
+  }, [isFavorite]);
+
+  const changeFavorites = (post: IPost) => {
+    const tempPost = Object.assign(post);
+    tempPost.favorites = post.favorites.filter((item) => item !== user!.uid);
+    const updates: newPostData = {};
+    updates[tempPost.postUID + '/'] = tempPost;
+    update(postsRef, updates).finally(() => {
+      setFavorite(undefined);
+    });
+  };
+
   return (
     <>
-      {isLoading && <Skeleton />}
+      {isLoading && (
+        <Container component="main" sx={{ mt: 15, mb: 10 }}>
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+        </Container>
+      )}
 
       {isLoaded && postsList.length === 0 && (
         <Container component="main" sx={{ mt: 15, mb: 10 }}>
@@ -135,6 +173,15 @@ export const Favorites: React.FC = () => {
                         Dislikes:{' '}
                         {item.countOfDislikes ? item.countOfDislikes.length : 0}
                       </Typography>
+
+                      {isFavorite !== undefined && (
+                        <StarBorderIcon onClick={() => handleStarClick(item)} />
+                      )}
+                      {isFavorite === undefined && (
+                        <StarOutlinedIcon
+                          onClick={() => handleStarClick(item)}
+                        />
+                      )}
 
                       <Button onClick={() => setOpenCard(index)}>
                         Read more

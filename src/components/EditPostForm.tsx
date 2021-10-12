@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { IPostForm, postSchema } from '../yupInterfaces';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { $currentUser } from '../currentUserStore';
+import React, { useState } from 'react';
+import { IPost, newPostData } from '../dataIntefaces';
 import {
   Alert,
   Backdrop,
   Box,
   Button,
-  CircularProgress,
   Container,
   CssBaseline,
   Grid,
+  CircularProgress,
   Snackbar,
   TextField,
 } from '@mui/material';
+import { push, update } from 'firebase/database';
+import { postsRef } from './App';
+import { $currentUser } from '../currentUserStore';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { IPostForm, postSchema } from '../yupInterfaces';
 import { useStore } from 'effector-react';
-import { IPost, newPostData } from '../dataIntefaces';
-import { push, ref, set, update } from 'firebase/database';
-import { db, postsRef } from './App';
+import { useHistory } from 'react-router';
 
-export const AddPost: React.FC = () => {
+interface IEditPostFormProps {
+  item: IPost;
+  closeEdit: () => void;
+}
+
+export const EditPostForm: React.FC<IEditPostFormProps> = ({
+  item,
+  closeEdit,
+}) => {
   const user = useStore($currentUser);
+  const history = useHistory();
+
   const [loader, setLoader] = useState<boolean>(false);
   const [successPublish, setSuccessPublish] = useState<boolean>(false);
   const {
@@ -31,26 +42,29 @@ export const AddPost: React.FC = () => {
     formState: { errors },
   } = useForm<IPostForm>({
     resolver: yupResolver(postSchema),
+    defaultValues: {
+      title: item.title,
+      photoURL: item.photoURL,
+      description: item.description,
+      mainText: item.mainText,
+    },
   });
 
   const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
-    // todo: add uid for post
     const updates: newPostData = {};
-    const postKey = push(postsRef, updates).key;
-
-    updates[postKey + '/'] = {
-      postUID: postKey!,
-      authorID: user!.uid,
-      authorEmail: user!.email!,
+    updates[item.postUID + '/'] = {
+      postUID: item.postUID,
+      authorID: item.authorID,
+      authorEmail: item.authorEmail,
       title: data.title,
       description: data.description,
-      date: new Date().toISOString(),
+      date: item.date,
       photoURL: data.photoURL ?? '',
       mainText: data.mainText,
-      countOfLikes: [],
-      countOfDislikes: [],
-      favorites: [],
+      countOfLikes: item.countOfLikes,
+      countOfDislikes: item.countOfDislikes,
+      favorites: item.favorites,
     };
 
     try {
@@ -59,9 +73,9 @@ export const AddPost: React.FC = () => {
     } finally {
       setLoader(false);
       setSuccessPublish(true);
+      closeEdit();
     }
   };
-
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
