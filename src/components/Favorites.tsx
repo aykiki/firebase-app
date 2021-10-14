@@ -60,9 +60,6 @@ export const Favorites: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   const handleStarClick = async (item: IPostInfo) => {
     if (isFavorite !== undefined && isFavorite.postUID === item.postUID) {
