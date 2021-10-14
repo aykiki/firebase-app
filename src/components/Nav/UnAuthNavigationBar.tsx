@@ -8,30 +8,32 @@ import AnimationIcon from '@mui/icons-material/Animation';
 import { useHistory } from 'react-router';
 
 export const UnAuthNavigationBar: React.FC = () => {
-	const history = useHistory();
-	return (
-		<Box sx={{ flexGrow: 1 }}>
-			<AppBar position="static">
-				<Toolbar>
-					<AnimationIcon onClick={() => history.push('/')} sx={{ cursor: 'pointer',}}/>
-					<Typography
-						variant="h6"
-						component="div"
-						sx={{ flexGrow: 1, cursor: 'default'}}
-						onClick={() => history.push('/')}
-
-					>
+  const history = useHistory();
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <AnimationIcon
+            onClick={() => history.push('/')}
+            sx={{ cursor: 'pointer' }}
+          />
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, cursor: 'pointer', width: '110px' }}
+            onClick={() => history.push('/')}
+          >
             Private Cab
-					</Typography>
+          </Typography>
 
-					<Button color="inherit" onClick={() => history.push('/login')}>
+          <Button color="inherit" onClick={() => history.push('/login')}>
             Sign in
-					</Button>
-					<Button color="inherit" onClick={() => history.push('/registration')}>
+          </Button>
+          <Button color="inherit" onClick={() => history.push('/registration')}>
             Sign up
-					</Button>
-				</Toolbar>
-			</AppBar>
-		</Box>
-	);
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
 };
