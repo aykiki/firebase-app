@@ -15,6 +15,8 @@ export const UnAuthLayout = ({ children }: UnAuthLayoutProps) => {
 			if (user) {
 				history.push('/profile/info');
 				unsubscribe();
+			} else{
+				history.push('/');
 			}
 		});
 	}, [history]);
