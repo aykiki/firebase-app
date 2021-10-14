@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { UnAuthNavigationBar } from '../UnAuthNavigationBar';
+import { UnAuthNavigationBar } from '../Nav/UnAuthNavigationBar';
 import { onAuthStateChanged } from '@firebase/auth';
 import { appAuth } from '../App';
 import { useHistory } from 'react-router';
@@ -8,21 +8,21 @@ interface UnAuthLayoutProps {
 }
 
 export const UnAuthLayout = ({ children }: UnAuthLayoutProps) => {
-  const history = useHistory();
+	const history = useHistory();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(appAuth, (user) => {
-      if (user) {
-        history.push('/profile/info');
-        unsubscribe();
-      }
-    });
-  }, [history]);
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(appAuth, (user) => {
+			if (user) {
+				history.push('/profile/info');
+				unsubscribe();
+			}
+		});
+	}, [history]);
 
-  return (
-    <>
-      <UnAuthNavigationBar />
-      <div>{children}</div>
-    </>
-  );
+	return (
+		<>
+			<UnAuthNavigationBar />
+			<div>{children}</div>
+		</>
+	);
 };

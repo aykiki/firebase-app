@@ -6,16 +6,16 @@ import { getDatabase, ref } from 'firebase/database';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { UnAuthLayout } from './Layouts/UnAuthLayout';
 import { AuthLayout } from './Layouts/AuthLayout';
-import { Login } from './Login';
-import { Registration } from './Registration';
+import { Login } from './Auth/Login';
+import { Registration } from './Auth/Registration';
 import { StartPage } from './StartPage';
-import { ProfileInfo } from './ProfileInfo';
-import { ProfileChangePassword } from './ProfileChangePassword';
+import { EditProfile } from './Profile/EditProfile';
+import { ChangePassword } from './Profile/ChangePassword';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { AddPost } from './AddPost';
-import { Feed } from './Feed';
-import { Favorites } from './Favorites';
+import { AddPost } from './Posts/AddPost';
+import { Feed } from './Posts/Feed';
+import { Favorites } from './Posts/Favorites';
 
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
@@ -57,42 +57,42 @@ const theme = createTheme();
  *
  */
 export const App: React.FC = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Switch>
-          <Route path="/(login|registration)">
-            <UnAuthLayout>
-              <Switch>
-                <Route component={Login} path="/login" />
-                <Route component={Registration} path="/registration" />
-              </Switch>
-            </UnAuthLayout>
-          </Route>
+	return (
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<BrowserRouter>
+				<Switch>
+					<Route path="/(login|registration)">
+						<UnAuthLayout>
+							<Switch>
+								<Route component={Login} path="/login" />
+								<Route component={Registration} path="/registration" />
+							</Switch>
+						</UnAuthLayout>
+					</Route>
 
-          <Route path="/profile/(info|password|addPost|feed|favorites)">
-            <AuthLayout>
-              <Switch>
-                <Route component={ProfileInfo} path="/profile/info" />
-                <Route
-                  component={ProfileChangePassword}
-                  path="/profile/password"
-                />
-                <Route component={AddPost} path="/profile/addPost" />
-                <Route component={Feed} path="/profile/feed" />
-                <Route component={Favorites} path="/profile/favorites" />
-              </Switch>
-            </AuthLayout>
-          </Route>
+					<Route path="/profile/(info|password|addPost|feed|favorites)">
+						<AuthLayout>
+							<Switch>
+								<Route component={EditProfile} path="/profile/info" />
+								<Route
+									component={ChangePassword}
+									path="/profile/password"
+								/>
+								<Route component={AddPost} path="/profile/addPost" />
+								<Route component={Feed} path="/profile/feed" />
+								<Route component={Favorites} path="/profile/favorites" />
+							</Switch>
+						</AuthLayout>
+					</Route>
 
-          <Route path="/">
-            <UnAuthLayout>
-              <Route component={StartPage} path="/" />
-            </UnAuthLayout>
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </ThemeProvider>
-  );
+					<Route path="/">
+						<UnAuthLayout>
+							<Route component={StartPage} path="/" />
+						</UnAuthLayout>
+					</Route>
+				</Switch>
+			</BrowserRouter>
+		</ThemeProvider>
+	);
 };
