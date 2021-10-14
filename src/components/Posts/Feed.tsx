@@ -17,12 +17,10 @@ import { CardActions } from '@material-ui/core';
 import { PostCard } from './PostCard';
 
 export const Feed: React.FC = () => {
-
 	const [postsList, setPostsList] = useState<IPostInfo[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isLoaded, setIsLoaded] = useState<boolean>(false);
 	const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
-
 
 	const fetchPosts = async () => {
 		try {
@@ -55,7 +53,6 @@ export const Feed: React.FC = () => {
 	useEffect(() => {
 		fetchPosts();
 	}, []);
-
 
 	useEffect(() => {
 		if (whichCardIsOpen === undefined) {

@@ -57,6 +57,7 @@ const theme = createTheme();
  *
  */
 export const App: React.FC = () => {
+
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
