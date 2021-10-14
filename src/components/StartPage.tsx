@@ -45,7 +45,7 @@ export const StartPage: React.FC = () => {
 						}}
 					>
 						<Typography component="h1" variant="h5">
-              Let's start
+              Lets start
 						</Typography>
 						<Button
 							type="submit"
