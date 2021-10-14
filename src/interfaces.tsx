@@ -1,4 +1,4 @@
-export interface IPost {
+export interface IPostInfo {
   postUID: string;
   authorID: string;
   authorEmail: string;
@@ -12,8 +12,8 @@ export interface IPost {
   favorites: string[],
 }
 
-export interface newPostData {
-  [key: string]: IPost;
+export interface IPost {
+  [key: string]: IPostInfo;
 }
 
 export type Reaction = 'like' | 'dislike' | 'none';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { child, get, ref, update } from 'firebase/database';
 import { db, postsRef } from './App';
-import { IPost, newPostData } from '../dataIntefaces';
+import { IPostInfo, IPost } from '../interfaces';
 import {
   Button,
   Card,
@@ -21,8 +21,8 @@ import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 
 export const Favorites: React.FC = () => {
-  const [isFavorite, setFavorite] = useState<undefined | IPost>(undefined);
-  const [postsList, setPostsList] = useState<IPost[]>([]);
+  const [isFavorite, setFavorite] = useState<undefined | IPostInfo>(undefined);
+  const [postsList, setPostsList] = useState<IPostInfo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
@@ -34,7 +34,7 @@ export const Favorites: React.FC = () => {
       setIsLoading(true);
       const snapshot = await get(child(ref(db), 'posts/'));
       if (snapshot.val()) {
-        let tempArray: IPost[] = Object.values(snapshot.val());
+        let tempArray: IPostInfo[] = Object.values(snapshot.val());
         tempArray = tempArray.map((item) => {
           if (!item.countOfDislikes) {
             item.countOfDislikes = [];
@@ -64,7 +64,7 @@ export const Favorites: React.FC = () => {
     fetchPosts();
   }, []);
 
-  const handleStarClick = async (item: IPost) => {
+  const handleStarClick = async (item: IPostInfo) => {
     if (isFavorite !== undefined && isFavorite.postUID === item.postUID) {
       setFavorite(undefined);
       return;
@@ -81,10 +81,10 @@ export const Favorites: React.FC = () => {
     fetchPosts();
   }, [isFavorite]);
 
-  const changeFavorites = (post: IPost) => {
+  const changeFavorites = (post: IPostInfo) => {
     const tempPost = Object.assign(post);
     tempPost.favorites = post.favorites.filter((item) => item !== user!.uid);
-    const updates: newPostData = {};
+    const updates: IPost = {};
     updates[tempPost.postUID + '/'] = tempPost;
     update(postsRef, updates).finally(() => {
       setFavorite(undefined);

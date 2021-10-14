@@ -19,21 +19,17 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  IPassword,
-  passwordSchema,
-} from '../yupInterfaces';
+import { IPassword } from '../yup.interfaces';
+import { passwordSchema } from '../yup.schemas';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 export const ProfileChangePassword: React.FC = () => {
-
   const [reveal, setReveal] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const [successEdit, setSuccessEdit] = useState<boolean>(false);
   const [errorType, setErrorType] = useState<string | null>(null);
 
   const user = useStore($currentUser);
-
 
   const {
     register,

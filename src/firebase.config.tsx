@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyC4dXQ4_tgsWbDbdLoLsxmm6m_pGkjmDc8",
-  authDomain: "fir-app-79a4f.firebaseapp.com",
-  databaseURL: "https://fir-app-79a4f-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "fir-app-79a4f",
-  storageBucket: "fir-app-79a4f.appspot.com",
-  messagingSenderId: "1067330313040",
-  appId: "1:1067330313040:web:ec8110805a5ba8907f6a55"
+  apiKey: "AIzaSyDZsIRzli2_kuWHzXbi8pdGPes4m-7DdU4",
+  authDomain: "fir-posts-d038c.firebaseapp.com",
+  databaseURL: "https://fir-posts-d038c-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "fir-posts-d038c",
+  storageBucket: "fir-posts-d038c.appspot.com",
+  messagingSenderId: "736811714143",
+  appId: "1:736811714143:web:4eeee143c1fd3fa03f7dea"
 };

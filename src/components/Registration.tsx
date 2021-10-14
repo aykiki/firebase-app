@@ -10,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
-import { userSchemaWithConfirmationPassword, IUser } from '../yupInterfaces';
+import { IUser } from '../yup.interfaces';
+import { userSchemaRegistration } from '../yup.schemas'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { createUserWithEmailAndPassword } from '@firebase/auth';
@@ -30,7 +31,7 @@ export const Registration: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IUser>({
-    resolver: yupResolver(userSchemaWithConfirmationPassword),
+    resolver: yupResolver(userSchemaRegistration),
   });
 
   const onSubmit: SubmitHandler<IUser> = (data) => {

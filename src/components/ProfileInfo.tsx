@@ -14,7 +14,8 @@ import {
   Backdrop,
   CircularProgress,
 } from '@mui/material';
-import { IUserInfo, newDataUserSchema } from '../yupInterfaces';
+import { IUserInfo } from '../yup.interfaces';
+import { userSchemaEditInfo } from '../yup.schemas';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateEmail, updateProfile } from 'firebase/auth';
 
@@ -29,7 +30,7 @@ export const ProfileInfo: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IUserInfo>({
-    resolver: yupResolver(newDataUserSchema),
+    resolver: yupResolver(userSchemaEditInfo),
     defaultValues: {
       displayName: user?.displayName ?? '',
       email: user?.email ?? '',

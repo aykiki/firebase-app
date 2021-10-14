@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IPost, newPostData } from '../dataIntefaces';
+import { IPostInfo, IPost } from '../interfaces';
 import {
   Alert,
   Backdrop,
@@ -16,10 +16,11 @@ import { update } from 'firebase/database';
 import { postsRef } from './App';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { IPostForm, postSchema } from '../yupInterfaces';
+import { IPostForm } from '../yup.interfaces';
+import { postSchema } from '../yup.schemas';
 
 interface IEditPostFormProps {
-  item: IPost;
+  item: IPostInfo;
   closeEdit: () => void;
 }
 
@@ -50,7 +51,7 @@ export const EditPostForm: React.FC<IEditPostFormProps> = ({
 
   const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
-    const updates: newPostData = {};
+    const updates: IPost = {};
     updates[item.postUID + '/'] = {
       postUID: item.postUID,
       authorID: item.authorID,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { IPostForm, postSchema } from '../yupInterfaces';
+import { IPostForm } from '../yup.interfaces';
+import { postSchema } from '../yup.schemas';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { $currentUser } from '../currentUserStore';
 import {
@@ -16,7 +17,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useStore } from 'effector-react';
-import { newPostData } from '../dataIntefaces';
+import { IPost } from '../interfaces';
 import { push, update } from 'firebase/database';
 import { postsRef } from './App';
 
@@ -38,7 +39,7 @@ export const AddPost: React.FC = () => {
   const onSubmit: SubmitHandler<IPostForm> = async (data) => {
     setLoader(true);
 
-    const updates: newPostData = {};
+    const updates: IPost = {};
     const postKey = push(postsRef, updates).key;
 
     updates[postKey + '/'] = {

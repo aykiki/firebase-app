@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { child, get, ref } from 'firebase/database';
 import { db } from './App';
-import { IPost } from '../dataIntefaces';
+import { IPostInfo } from '../interfaces';
 import {
   Button,
   Card,
@@ -18,7 +18,7 @@ import { PostCard } from './PostCard';
 
 export const Feed: React.FC = () => {
 
-  const [postsList, setPostsList] = useState<IPost[]>([]);
+  const [postsList, setPostsList] = useState<IPostInfo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
@@ -29,7 +29,7 @@ export const Feed: React.FC = () => {
       setIsLoading(true);
       const snapshot = await get(child(ref(db), 'posts/'));
       if (snapshot.val()) {
-        let tempArray: IPost[] = Object.values(snapshot.val());
+        let tempArray: IPostInfo[] = Object.values(snapshot.val());
         tempArray = tempArray.map((item) => {
           if (!item.countOfDislikes) {
             item.countOfDislikes = [];

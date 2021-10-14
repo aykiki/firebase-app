@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IPost, newPostData, Reaction } from '../dataIntefaces';
+import { IPostInfo, IPost, Reaction } from '../interfaces';
 import {
   Card,
   CardActions,
@@ -24,7 +24,7 @@ import { $currentUser } from '../currentUserStore';
 import { useStore } from 'effector-react';
 import { EditPostForm } from './EditPostForm';
 interface IPostCardProps {
-  item: IPost;
+  item: IPostInfo;
   closePost: () => void;
 }
 
@@ -119,7 +119,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       tempPost.favorites.push(userUID);
     }
 
-    const updates: newPostData = {};
+    const updates: IPost = {};
     updates[tempPost.postUID + '/'] = tempPost;
     update(postsRef, updates);
   };
