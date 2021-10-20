@@ -88,18 +88,6 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
     update(commentsRef, updates).finally(() => setReaction(react));
   };
 
-  // const giveReaction = (react: Reaction) => {
-  //   if (react === reaction) {
-  //     setReaction('none');
-  //     return;
-  //   }
-  //   if (reaction !== react) {
-  //     setReaction(react);
-  //     return;
-  //   }
-  //   setReaction('none');
-  // };
-
   useEffect(() => {
     if (item.countOfLikes.includes(user!.uid)) {
       setReaction('like');
@@ -114,58 +102,15 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (reaction === 'dislike') {
-  //     if (item.countOfDislikes.includes(user!.uid)) {
-  //       changeReaction('deleteDislike', user!.uid);
-  //     } else {
-  //       changeReaction('deleteLike', user!.uid);
-  //       changeReaction('addDislike', user!.uid);
-  //     }
-  //   } else if (reaction === 'like') {
-  //     if (item.countOfLikes.includes(user!.uid)) {
-  //       changeReaction('deleteLike', user!.uid);
-  //     } else {
-  //       changeReaction('deleteDislike', user!.uid);
-  //       changeReaction('addLike', user!.uid);
-  //     }
-  //   } else {
-  //     changeReaction('deleteDislike', user!.uid);
-  //     changeReaction('deleteLike', user!.uid);
-  //   }
-  // }, [reaction]);
+  useEffect(() => {
+    if (item.countOfLikes.includes(user!.uid)) {
+      setReaction('like');
+    }
 
-  // const changeReaction = (control: string, userUID: string) => {
-  //   const tempPost = Object.assign(item);
-  //   if (control === 'deleteDislike') {
-  //     tempPost.countOfDislikes = item.countOfDislikes.filter(
-  //       (item) => item !== userUID
-  //     );
-  //   }
-  //   if (control === 'addDislike') {
-  //     tempPost.countOfDislikes.push(userUID);
-  //   }
-  //   if (control === 'deleteLike') {
-  //     tempPost.countOfLikes = item.countOfLikes.filter(
-  //       (item) => item !== userUID
-  //     );
-  //   }
-  //   if (control === 'addLike') {
-  //     tempPost.countOfLikes.push(userUID);
-  //   }
-  //
-  //   if (control === 'deleteFromFavorites') {
-  //     tempPost.favorites = item.favorites.filter((item) => item !== userUID);
-  //   }
-  //
-  //   if (control === 'addToFavorites') {
-  //     tempPost.favorites.push(userUID);
-  //   }
-  //
-  //   const updates: IPost = {};
-  //   updates[tempPost.postUID + '/'] = tempPost;
-  //   update(postsRef, updates);
-  // };
+    if (item.countOfDislikes.includes(user!.uid)) {
+      setReaction('dislike');
+    }
+  }, []);
 
   useEffect(() => {
     const tempPost = Object.assign(item);
