@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IPostInfo, IPost } from '../../interfaces';
+import { IPostData, IPost } from '../../interfaces';
 import {
 	Alert,
 	Backdrop,
@@ -20,7 +20,7 @@ import { IPostForm } from '../../yup/yup.interfaces';
 import { postSchema } from '../../yup/yup.schemas';
 
 interface IEditPostFormProps {
-  item: IPostInfo;
+  item: IPostData;
   closeEdit: () => void;
 }
 

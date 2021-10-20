@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IPostInfo, IPost, Reaction } from '../../interfaces';
+import { IPostData, IPost, Reaction } from '../../interfaces';
 import {
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
-	CardMedia,
-	IconButton,
-	Typography,
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  IconButton,
+  Typography,
 } from '@mui/material';
 import { Container } from '@mui/material';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
@@ -17,199 +18,265 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import { update } from 'firebase/database';
-import { postsRef } from '../App';
+import { commentsRef, postsRef } from '../App';
 import EditIcon from '@mui/icons-material/Edit';
 import { $currentUser } from '../../currUserStore';
 import { useStore } from 'effector-react';
 import { EditPost } from './EditPost';
+import { Comments } from './Comments';
 interface IPostCardProps {
-  item: IPostInfo;
+  item: IPostData;
   closePost: () => void;
 }
 
 export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
+  const [reaction, setReaction] = useState<Reaction>('none');
+  const [isFavorite, setFavorite] = useState<boolean>(false);
+  const [isEdit, setEdit] = useState<boolean>(false);
+  const [showComments, setShowComments] = useState<boolean>(false);
 
-	const [reaction, setReaction] = useState<Reaction>('none');
-	const [isFavorite, setFavorite] = useState<boolean>(false);
-	const [isEdit, setEdit] = useState<boolean>(false);
+  const user = useStore($currentUser);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
-	const user = useStore($currentUser);
+  const handleClickReaction = (react: Reaction) => {
+    const tempPost = Object.assign(item);
+    const updates: IPost = {};
 
+    if (react === reaction) {
+      tempPost.countOfLikes = item.countOfLikes.filter(
+        (item) => item !== user!.uid
+      );
+      tempPost.countOfDislikes = item.countOfDislikes.filter(
+        (item) => item !== user!.uid
+      );
+      updates[tempPost.commentsUID + '/'] = tempPost;
+      update(commentsRef, updates).finally(() => setReaction('none'));
+      return;
+    }
+    if (react === 'dislike') {
+      if (item.countOfDislikes.includes(user!.uid)) {
+        tempPost.countOfDislikes = item.countOfDislikes.filter(
+          (item) => item !== user!.uid
+        );
+      } else {
+        tempPost.countOfDislikes.push(user!.uid);
+      }
+      tempPost.countOfLikes = item.countOfLikes.filter(
+        (item) => item !== user!.uid
+      );
+    }
+    if (react === 'like') {
+      if (item.countOfLikes.includes(user!.uid)) {
+        tempPost.countOfLikes = item.countOfLikes.filter(
+          (item) => item !== user!.uid
+        );
+      } else {
+        tempPost.countOfLikes.push(user!.uid);
+      }
+      tempPost.countOfDislikes = item.countOfLikes.filter(
+        (item) => item !== user!.uid
+      );
+    }
 
-	useEffect(() => {
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-	}, []);
+    updates[tempPost.commentsUID + '/'] = tempPost;
+    update(commentsRef, updates).finally(() => setReaction(react));
+  };
 
-	const giveReaction = (react: Reaction) => {
-		if (react === reaction) {
-			setReaction('none');
-			return;
-		}
-		if (reaction !== react) {
-			setReaction(react);
-			return;
-		}
-		setReaction('none');
-	};
+  // const giveReaction = (react: Reaction) => {
+  //   if (react === reaction) {
+  //     setReaction('none');
+  //     return;
+  //   }
+  //   if (reaction !== react) {
+  //     setReaction(react);
+  //     return;
+  //   }
+  //   setReaction('none');
+  // };
 
-	useEffect(() => {
-		if (item.countOfLikes.includes(user!.uid)) {
-			setReaction('like');
-		}
+  useEffect(() => {
+    if (item.countOfLikes.includes(user!.uid)) {
+      setReaction('like');
+    }
 
-		if (item.countOfDislikes.includes(user!.uid)) {
-			setReaction('dislike');
-		}
+    if (item.countOfDislikes.includes(user!.uid)) {
+      setReaction('dislike');
+    }
 
-		if (item.favorites.includes(user!.uid)) {
-			setFavorite(true);
-		}
-	}, []);
+    if (item.favorites.includes(user!.uid)) {
+      setFavorite(true);
+    }
+  }, []);
 
+  // useEffect(() => {
+  //   if (reaction === 'dislike') {
+  //     if (item.countOfDislikes.includes(user!.uid)) {
+  //       changeReaction('deleteDislike', user!.uid);
+  //     } else {
+  //       changeReaction('deleteLike', user!.uid);
+  //       changeReaction('addDislike', user!.uid);
+  //     }
+  //   } else if (reaction === 'like') {
+  //     if (item.countOfLikes.includes(user!.uid)) {
+  //       changeReaction('deleteLike', user!.uid);
+  //     } else {
+  //       changeReaction('deleteDislike', user!.uid);
+  //       changeReaction('addLike', user!.uid);
+  //     }
+  //   } else {
+  //     changeReaction('deleteDislike', user!.uid);
+  //     changeReaction('deleteLike', user!.uid);
+  //   }
+  // }, [reaction]);
 
-	useEffect(() => {
-		if (reaction === 'dislike') {
-			if (item.countOfDislikes.includes(user!.uid)) {
-				changeReaction('deleteDislike', user!.uid);
-			} else {
-				changeReaction('deleteLike', user!.uid);
-				changeReaction('addDislike', user!.uid);
-			}
-		} else if (reaction === 'like') {
-			if (item.countOfLikes.includes(user!.uid)) {
-				changeReaction('deleteLike', user!.uid);
-			} else {
-				changeReaction('deleteDislike', user!.uid);
-				changeReaction('addLike', user!.uid);
-			}
-		} else {
-			changeReaction('deleteDislike', user!.uid);
-			changeReaction('deleteLike', user!.uid);
-		}
-	}, [reaction]);
+  // const changeReaction = (control: string, userUID: string) => {
+  //   const tempPost = Object.assign(item);
+  //   if (control === 'deleteDislike') {
+  //     tempPost.countOfDislikes = item.countOfDislikes.filter(
+  //       (item) => item !== userUID
+  //     );
+  //   }
+  //   if (control === 'addDislike') {
+  //     tempPost.countOfDislikes.push(userUID);
+  //   }
+  //   if (control === 'deleteLike') {
+  //     tempPost.countOfLikes = item.countOfLikes.filter(
+  //       (item) => item !== userUID
+  //     );
+  //   }
+  //   if (control === 'addLike') {
+  //     tempPost.countOfLikes.push(userUID);
+  //   }
+  //
+  //   if (control === 'deleteFromFavorites') {
+  //     tempPost.favorites = item.favorites.filter((item) => item !== userUID);
+  //   }
+  //
+  //   if (control === 'addToFavorites') {
+  //     tempPost.favorites.push(userUID);
+  //   }
+  //
+  //   const updates: IPost = {};
+  //   updates[tempPost.postUID + '/'] = tempPost;
+  //   update(postsRef, updates);
+  // };
 
+  useEffect(() => {
+    const tempPost = Object.assign(item);
+    const updates: IPost = {};
 
+    if (isFavorite) {
+      if (!item.favorites.includes(user!.uid)) {
+        tempPost.favorites.push(user!.uid);
+      }
+    }
+    if (!isFavorite) {
+      if (item.favorites.includes(user!.uid)) {
+        tempPost.favorites = item.favorites.filter(
+          (item) => item !== user!.uid
+        );
+      }
+    }
+    updates[tempPost.postUID + '/'] = tempPost;
+    update(postsRef, updates);
+  }, [isFavorite]);
 
-	const changeReaction = (control: string, userUID: string) => {
-		const tempPost = Object.assign(item);
-		if (control === 'deleteDislike') {
-			tempPost.countOfDislikes = item.countOfDislikes.filter(
-				(item) => item !== userUID
-			);
-		}
-		if (control === 'addDislike') {
-			tempPost.countOfDislikes.push(userUID);
-		}
-		if (control === 'deleteLike') {
-			tempPost.countOfLikes = item.countOfLikes.filter(
-				(item) => item !== userUID
-			);
-		}
-		if (control === 'addLike') {
-			tempPost.countOfLikes.push(userUID);
-		}
+  return (
+    <Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
+      {!isEdit && (
+        <Card>
+          <CardHeader
+            title={item.title}
+            action={
+              <>
+                {user!.uid === item.authorID && (
+                  <IconButton>
+                    <EditIcon onClick={() => setEdit((prev) => !prev)} />
+                  </IconButton>
+                )}
+                <IconButton>
+                  <CloseIcon onClick={closePost} />
+                </IconButton>
+              </>
+            }
+          />
 
-		if (control === 'deleteFromFavorites') {
-			tempPost.favorites = item.favorites.filter((item) => item !== userUID);
-		}
-
-		if (control === 'addToFavorites') {
-			tempPost.favorites.push(userUID);
-		}
-
-		const updates: IPost = {};
-		updates[tempPost.postUID + '/'] = tempPost;
-		update(postsRef, updates);
-	};
-
-
-
-	useEffect(() => {
-		if (isFavorite) {
-			if (!item.favorites.includes(user!.uid)) {
-				changeReaction('addToFavorites', user!.uid);
-			}
-		}
-		if (!isFavorite) {
-			if (item.favorites.includes(user!.uid)) {
-				changeReaction('deleteFromFavorites', user!.uid);
-			}
-		}
-	}, [isFavorite]);
-
-
-
-	return (
-		<Container component="main" maxWidth="lg" sx={{ mt: 15 }}>
-			{!isEdit && (
-				<Card>
-					<CardHeader
-						title={item.title}
-						action={
-							<>
-								{user!.uid === item.authorID && (
-									<IconButton>
-										<EditIcon onClick={() => setEdit((prev) => !prev)} />
-									</IconButton>
-								)}
-								<IconButton>
-									<CloseIcon onClick={closePost} />
-								</IconButton>
-							</>
-						}
-					/>
-
-					<CardMedia
-						component="img"
-						height="640"
-						image={
-							item.photoURL !== ''
-								? item.photoURL
-								: 'https://i.stack.imgur.com/y9DpT.jpg'
-						}
-						alt={item.title}
-					/>
-					<CardContent>
-						<Typography
-							variant="body2"
-							color="text.secondary"
-							component="pre"
-							style={{
-								whiteSpace: 'pre-wrap',
-								wordBreak: 'break-word',
-							}}
-						>
-							{item.mainText}
-						</Typography>
-					</CardContent>
-					<CardActions>
-						<Typography variant="body2" color="text.secondary" component="p">
+          <CardMedia
+            component="img"
+            height="640"
+            image={
+              item.photoURL !== ''
+                ? item.photoURL
+                : 'https://i.stack.imgur.com/y9DpT.jpg'
+            }
+            alt={item.title}
+          />
+          <CardContent>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              component="pre"
+              style={{
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {item.mainText}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Typography variant="body2" color="text.secondary" component="p">
               post by: {item.authorEmail}
-						</Typography>
-						<IconButton aria-label="like" onClick={() => giveReaction('like')}>
-							{reaction === 'like' && <ThumbUpIcon />}
-							{reaction !== 'like' && <ThumbUpAltOutlinedIcon />}
-						</IconButton>
-						<IconButton
-							aria-label="dislike"
-							onClick={() => giveReaction('dislike')}
-						>
-							{reaction === 'dislike' && <ThumbDownAltIcon />}
-							{reaction !== 'dislike' && <ThumbDownOutlinedIcon />}
-						</IconButton>
-						<IconButton
-							aria-label="favorite"
-							onClick={() => setFavorite((prev) => !prev)}
-						>
-							{isFavorite && <StarOutlinedIcon />}
-							{!isFavorite && <StarBorderIcon />}
-						</IconButton>
-					</CardActions>
-				</Card>
-			)}
-			{isEdit && <EditPost closeEdit={closePost} item={item} />}
-		</Container>
-	);
+            </Typography>
+
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginLeft: '16px',
+              }}
+            >
+              {item.countOfLikes.length}
+              <IconButton
+                aria-label="like"
+                onClick={() => handleClickReaction('like')}
+              >
+                {reaction === 'like' && <ThumbUpIcon />}
+                {reaction !== 'like' && <ThumbUpAltOutlinedIcon />}
+              </IconButton>
+              {item.countOfDislikes.length}
+
+              <IconButton
+                aria-label="dislike"
+                onClick={() => handleClickReaction('dislike')}
+              >
+                {reaction === 'dislike' && <ThumbDownAltIcon />}
+                {reaction !== 'dislike' && <ThumbDownOutlinedIcon />}
+              </IconButton>
+            </Box>
+            <IconButton
+              aria-label="favorite"
+              onClick={() => setFavorite((prev) => !prev)}
+            >
+              {isFavorite && <StarOutlinedIcon />}
+              {!isFavorite && <StarBorderIcon />}
+            </IconButton>
+            <IconButton onClick={() => setShowComments((prev) => !prev)}>
+              {showComments && <ChatBubbleIcon />}
+              {!showComments && <ChatBubbleOutlineOutlinedIcon />}
+            </IconButton>
+          </CardActions>
+        </Card>
+      )}
+      {showComments && <Comments postID={item.postUID} />}
+      {isEdit && <EditPost closeEdit={closePost} item={item} />}
+    </Container>
+  );
 };

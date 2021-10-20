@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { child, get, ref, update } from 'firebase/database';
 import { db, postsRef } from '../App';
-import { IPostInfo, IPost } from '../../interfaces';
+import { IPostData, IPost } from '../../interfaces';
 import {
     Button,
     Card,
@@ -21,10 +21,10 @@ import { $currentUser } from '../../currUserStore';
 import { useStore } from 'effector-react';
 
 export const Favorites: React.FC = () => {
-    const [isFavorite, setFavorite] = useState<undefined | IPostInfo>(
+    const [isFavorite, setFavorite] = useState<undefined | IPostData>(
         undefined
     );
-    const [postsList, setPostsList] = useState<IPostInfo[]>([]);
+    const [postsList, setPostsList] = useState<IPostData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const [whichCardIsOpen, setOpenCard] = useState<number | undefined>();
@@ -36,7 +36,7 @@ export const Favorites: React.FC = () => {
             setIsLoading(true);
             const snapshot = await get(child(ref(db), 'posts/'));
             if (snapshot.val()) {
-                let tempArray: IPostInfo[] = Object.values(snapshot.val());
+                let tempArray: IPostData[] = Object.values(snapshot.val());
                 tempArray = tempArray.map((item) => {
                     if (!item.countOfDislikes) {
                         item.countOfDislikes = [];
@@ -62,7 +62,7 @@ export const Favorites: React.FC = () => {
         }
     };
 
-    const handleStarClick = async (item: IPostInfo) => {
+    const handleStarClick = async (item: IPostData) => {
         if (isFavorite !== undefined && isFavorite.postUID === item.postUID) {
             setFavorite(undefined);
             return;
@@ -79,7 +79,7 @@ export const Favorites: React.FC = () => {
         fetchPosts();
     }, [isFavorite]);
 
-    const changeFavorites = (post: IPostInfo) => {
+    const changeFavorites = (post: IPostData) => {
         const tempPost = Object.assign(post);
         tempPost.favorites = post.favorites.filter(
             (item) => item !== user!.uid

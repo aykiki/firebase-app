@@ -21,6 +21,7 @@ export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const appAuth = getAuth();
 export const postsRef = ref(db, 'posts/');
+export const commentsRef = ref(db, 'comments/');
 const theme = createTheme();
 
 /**
