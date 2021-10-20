@@ -55,7 +55,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       tempPost.countOfDislikes = item.countOfDislikes.filter(
         (item) => item !== user!.uid
       );
-      updates[tempPost.commentsUID + '/'] = tempPost;
+      updates[tempPost.postUID + '/'] = tempPost;
       update(postsRef, updates).finally(() => setReaction('none'));
       return;
     }
@@ -71,8 +71,9 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
         (item) => item !== user!.uid
       );
 
-      updates[tempPost.commentsUID + '/'] = tempPost;
+      updates[tempPost.postUID + '/'] = tempPost;
       update(postsRef, updates).finally(() => setReaction('dislike'));
+      return;
     }
 
     if (item.countOfLikes.includes(user!.uid)) {
@@ -86,7 +87,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       (item) => item !== user!.uid
     );
 
-    updates[tempPost.commentsUID + '/'] = tempPost;
+    updates[tempPost.postUID + '/'] = tempPost;
     update(postsRef, updates).finally(() => setReaction('like'));
   };
 
@@ -101,16 +102,6 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
 
     if (item.favorites.includes(user!.uid)) {
       setFavorite(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (item.countOfLikes.includes(user!.uid)) {
-      setReaction('like');
-    }
-
-    if (item.countOfDislikes.includes(user!.uid)) {
-      setReaction('dislike');
     }
   }, []);
 

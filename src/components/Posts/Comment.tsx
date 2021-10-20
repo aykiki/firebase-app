@@ -23,10 +23,7 @@ interface ICommentProps {
 export const Comment: FC<ICommentProps> = ({ item }) => {
   const [reaction, setReaction] = useState<Reaction>('none');
 
-
   const user = useStore($currentUser);
-
-
 
   const handleClickReaction = (react: Reaction) => {
     const updates: IComments = {};
@@ -84,7 +81,6 @@ export const Comment: FC<ICommentProps> = ({ item }) => {
       setReaction('dislike');
     }
   }, []);
-
 
   return (
     <Grid item xs={12}>
