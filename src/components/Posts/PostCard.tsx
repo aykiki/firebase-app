@@ -128,12 +128,12 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
             action={
               <>
                 {user!.uid === item.authorID && (
-                  <IconButton>
-                    <EditIcon onClick={() => setEdit((prev) => !prev)} />
+                  <IconButton onClick={() => setEdit((prev) => !prev)}>
+                    <EditIcon />
                   </IconButton>
                 )}
-                <IconButton>
-                  <CloseIcon onClick={closePost} />
+                <IconButton onClick={closePost}>
+                  <CloseIcon />
                 </IconButton>
               </>
             }
