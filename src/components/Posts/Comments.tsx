@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { IComments, ICommentsData, Reaction } from '../../interfaces';
-import { appAuth, commentsRef, db, postsRef } from '../App';
+import { IComments, ICommentsData } from '../../interfaces';
+import { commentsRef, db } from '../App';
 import { child, get, push, ref, update } from 'firebase/database';
 import { ICommentsForm } from '../../yup/yup.interfaces';
 import { SubmitHandler, useForm } from 'react-hook-form';
