@@ -26,50 +26,45 @@ export const Comment: FC<ICommentProps> = ({ item }) => {
   const user = useStore($currentUser);
 
   const handleClickReaction = (react: Reaction) => {
+    if (react === reaction) {
+      deleteReaction();
+      return;
+    }
+    addReaction(react);
+  };
+
+  const deleteReaction = async () => {
+    const updates: IComments = {};
+    const tempComment = Object.assign(item);
+    tempComment.countOfLikes = item.countOfLikes.filter(
+      (it) => it !== user!.uid
+    );
+    tempComment.countOfDislikes = item.countOfDislikes.filter(
+      (it) => it !== user!.uid
+    );
+    updates[tempComment.commentUID + '/'] = tempComment;
+    await update(commentsRef, updates).finally(() => setReaction('none'));
+  };
+
+  const addReaction = async (react: Reaction) => {
     const updates: IComments = {};
     const tempComment = Object.assign(item);
 
-    if (react === reaction) {
-      tempComment.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
-      tempComment.countOfDislikes = item.countOfDislikes.filter(
-        (item) => item !== user!.uid
-      );
-      updates[tempComment.commentsUID + '/'] = tempComment;
-      update(commentsRef, updates).finally(() => setReaction('none'));
-      return;
-    }
-    if (react === 'dislike') {
-      if (item.countOfDislikes.includes(user!.uid)) {
-        tempComment.countOfDislikes = item.countOfDislikes.filter(
-          (item) => item !== user!.uid
-        );
-      } else {
-        tempComment.countOfDislikes.push(user!.uid);
-      }
-      tempComment.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
-
-      updates[tempComment.commentsUID + '/'] = tempComment;
-      update(commentsRef, updates).finally(() => setReaction('dislike'));
-      return;
+    if (
+      item.countOfLikes.includes(user!.uid) ||
+      item.countOfDislikes.includes(user!.uid)
+    ) {
+      deleteReaction();
     }
 
-    if (item.countOfLikes.includes(user!.uid)) {
-      tempComment.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
-    } else {
+    if (react === 'like') {
       tempComment.countOfLikes.push(user!.uid);
+    } else {
+      tempComment.countOfDislikes.push(user!.uid);
     }
-    tempComment.countOfDislikes = item.countOfLikes.filter(
-      (item) => item !== user!.uid
-    );
 
     updates[tempComment.commentsUID + '/'] = tempComment;
-    update(commentsRef, updates).finally(() => setReaction('like'));
+    await update(commentsRef, updates).finally(() => setReaction(react));
   };
 
   useEffect(() => {

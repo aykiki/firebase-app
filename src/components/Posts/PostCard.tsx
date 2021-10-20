@@ -45,55 +45,49 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
   }, []);
 
   const handleClickReaction = (react: Reaction) => {
-    const tempPost = Object.assign(item);
-    const updates: IPost = {};
-
     if (react === reaction) {
-      tempPost.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
-      tempPost.countOfDislikes = item.countOfDislikes.filter(
-        (item) => item !== user!.uid
-      );
-      updates[tempPost.postUID + '/'] = tempPost;
-      update(postsRef, updates).finally(() => setReaction('none'));
+      deleteReaction();
       return;
     }
-    if (react === 'dislike') {
-      if (item.countOfDislikes.includes(user!.uid)) {
-        tempPost.countOfDislikes = item.countOfDislikes.filter(
-          (item) => item !== user!.uid
-        );
-      } else {
-        tempPost.countOfDislikes.push(user!.uid);
-      }
-      tempPost.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
+    addReaction(react);
+  };
 
-      updates[tempPost.postUID + '/'] = tempPost;
-      update(postsRef, updates).finally(() => setReaction('dislike'));
-      return;
-    }
-
-    if (item.countOfLikes.includes(user!.uid)) {
-      tempPost.countOfLikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
-    } else {
-      tempPost.countOfLikes.push(user!.uid);
-    }
-    tempPost.countOfDislikes = item.countOfLikes.filter(
-      (item) => item !== user!.uid
+  const deleteReaction = async () => {
+    const updates: IPost = {};
+    const tempPost = Object.assign(item);
+    tempPost.countOfLikes = item.countOfLikes.filter((it) => it !== user!.uid);
+    tempPost.countOfDislikes = item.countOfDislikes.filter(
+      (it) => it !== user!.uid
     );
+    updates[tempPost.postUID + '/'] = tempPost;
+    await update(postsRef, updates).finally(() => setReaction('none'));
+  };
+
+  const addReaction = async (react: Reaction) => {
+    const updates: IPost = {};
+    const tempPost = Object.assign(item);
+
+    if (
+      item.countOfLikes.includes(user!.uid) ||
+      item.countOfDislikes.includes(user!.uid)
+    ) {
+      deleteReaction();
+    }
+
+    if (react === 'like') {
+      tempPost.countOfLikes.push(user!.uid);
+    } else {
+      tempPost.countOfDislikes.push(user!.uid);
+    }
 
     updates[tempPost.postUID + '/'] = tempPost;
-    update(postsRef, updates).finally(() => setReaction('like'));
+    await update(postsRef, updates).finally(() => setReaction(react));
   };
 
   useEffect(() => {
     if (item.countOfLikes.includes(user!.uid)) {
       setReaction('like');
+      console.log('liker');
     }
 
     if (item.countOfDislikes.includes(user!.uid)) {
