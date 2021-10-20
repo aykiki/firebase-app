@@ -56,7 +56,7 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
         (item) => item !== user!.uid
       );
       updates[tempPost.commentsUID + '/'] = tempPost;
-      update(commentsRef, updates).finally(() => setReaction('none'));
+      update(postsRef, updates).finally(() => setReaction('none'));
       return;
     }
     if (react === 'dislike') {
@@ -70,22 +70,24 @@ export const PostCard: FC<IPostCardProps> = ({ item, closePost }) => {
       tempPost.countOfLikes = item.countOfLikes.filter(
         (item) => item !== user!.uid
       );
-    }
-    if (react === 'like') {
-      if (item.countOfLikes.includes(user!.uid)) {
-        tempPost.countOfLikes = item.countOfLikes.filter(
-          (item) => item !== user!.uid
-        );
-      } else {
-        tempPost.countOfLikes.push(user!.uid);
-      }
-      tempPost.countOfDislikes = item.countOfLikes.filter(
-        (item) => item !== user!.uid
-      );
+
+      updates[tempPost.commentsUID + '/'] = tempPost;
+      update(postsRef, updates).finally(() => setReaction('dislike'));
     }
 
+    if (item.countOfLikes.includes(user!.uid)) {
+      tempPost.countOfLikes = item.countOfLikes.filter(
+        (item) => item !== user!.uid
+      );
+    } else {
+      tempPost.countOfLikes.push(user!.uid);
+    }
+    tempPost.countOfDislikes = item.countOfLikes.filter(
+      (item) => item !== user!.uid
+    );
+
     updates[tempPost.commentsUID + '/'] = tempPost;
-    update(commentsRef, updates).finally(() => setReaction(react));
+    update(postsRef, updates).finally(() => setReaction('like'));
   };
 
   useEffect(() => {

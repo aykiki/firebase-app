@@ -12,6 +12,7 @@ import {
   Container,
   CssBaseline,
   Grid,
+  Skeleton,
   TextField,
 } from '@mui/material';
 import { useStore } from 'effector-react';
@@ -23,8 +24,6 @@ interface ICommentsProps {
 export const Comments: FC<ICommentsProps> = ({ postID }) => {
   const [commentsList, setCommentsList] = useState<ICommentsData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [loaderWriter, setLoaderWriter] = useState<boolean>(false);
 
   const user = useStore($currentUser);
 
@@ -37,7 +36,7 @@ export const Comments: FC<ICommentsProps> = ({ postID }) => {
     resolver: yupResolver(commentSchema),
   });
 
-  const fetchPosts = async () => {
+  const fetchComments = async () => {
     try {
       setIsLoading(true);
       const snapshot = await get(child(ref(db), 'comments/'));
@@ -57,19 +56,16 @@ export const Comments: FC<ICommentsProps> = ({ postID }) => {
       } else {
         setCommentsList([]);
       }
-      setIsLoaded(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPosts();
+    fetchComments();
   }, []);
 
   const onSubmit: SubmitHandler<ICommentsForm> = async (data) => {
-    setLoaderWriter(true);
-
     const updates: IComments = {};
     const commentKey = push(commentsRef, updates).key;
 
@@ -91,13 +87,14 @@ export const Comments: FC<ICommentsProps> = ({ postID }) => {
       await update(commentsRef, updates);
       reset(undefined);
     } finally {
-      fetchPosts();
-      setLoaderWriter(false);
+      fetchComments();
     }
   };
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 5 }}>
+      {isLoading && <Skeleton />}
+
       <CssBaseline />
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 5 }}>
         <Grid container spacing={2}>
@@ -116,7 +113,9 @@ export const Comments: FC<ICommentsProps> = ({ postID }) => {
             />
           </Grid>
           <Grid item xs={6}>
-            <Button type="submit" variant="contained" size="large">Send comment</Button>
+            <Button type="submit" variant="contained" size="large">
+              Send comment
+            </Button>
           </Grid>
           {commentsList.map((comment, index) => (
             <Comment item={comment} key={index} />
